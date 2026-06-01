@@ -1,0 +1,19 @@
+en:
+  site_settings:
+    xpeng_member_portal_enabled: "Enable Xpeng Member Portal"
+    xpeng_member_profile_endpoint: "Xpeng Member Profile Endpoint"
+    xpeng_member_api_key: "Discourse API key for the member profile endpoint"
+    xpeng_member_api_username: "Discourse API username for the member profile endpoint"
+    xpeng_member_uid_field: "Name of the Discourse custom field containing the member UID"
+    xpeng_owner_resource_topic_ids: "Owner Resource Topic IDs"
+    xpeng_member_resource_topic_ids: "Member Resource Topic IDs"
+    xpeng_dealer_resource_topic_ids: "Dealer Resource Topic IDs"
+
+  xpeng_member_portal:
+    errors:
+      endpoint_not_configured: "Member profile endpoint is not configured"
+      api_key_missing: "Discourse API key is not configured"
+      api_username_missing: "Discourse API username is not configured"
+      member_uid_missing: "Member UID is not set for this account"
+      profile_fetch_failed: "Unable to fetch member profile"
+      profile_fetch_timeout: "Member profile request timed out"

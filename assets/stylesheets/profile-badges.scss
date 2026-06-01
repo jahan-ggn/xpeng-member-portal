@@ -1,0 +1,49 @@
+.xpeng-profile-badges {
+  margin-top: 0.5rem;
+
+  @media screen and (width <= 767px) {
+    margin-bottom: 0.75rem;
+  }
+
+  &__since {
+    color: var(--primary-medium);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  &__badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+
+    @media screen and (width <= 1000px) {
+      flex-direction: column;
+    }
+  }
+
+  &__pill {
+    text-align: center;
+    font-size: var(--font-down-3);
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.65rem;
+    border-radius: 2px;
+    background: rgb(232, 69, 10, 0.15);
+    color: #e8450a;
+    border: 1px solid rgb(232, 69, 10, 0.3);
+
+    &--verified {
+      background: rgb(0, 194, 178, 0.12);
+      color: #00c2b2;
+      border-color: rgb(0, 194, 178, 0.25);
+    }
+
+    &--dvla {
+      background: rgb(0, 194, 178, 0.08);
+      color: #00c2b2;
+      border-color: rgb(0, 194, 178, 0.2);
+    }
+  }
+}

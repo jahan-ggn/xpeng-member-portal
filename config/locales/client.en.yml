@@ -1,0 +1,25 @@
+en:
+  admin_js:
+    admin:
+      site_settings:
+        categories:
+          xpeng_member_portal: "Xpeng Member Portal"
+  js:
+    xpeng_member_portal:
+      error_title: "Something went wrong"
+      vehicle: "Vehicle"
+      member_type: "Member Type"
+      member_id: "Member ID"
+      discourse_username: "Discourse Username"
+      verified: "Verified"
+      dvla_confirmed: "DVLA Confirmed"
+      dvla_verified_title: "Vehicle verified via DVLA"
+      dvla_confirmed_owner: "Confirmed owner"
+      resources: "Resources"
+      resource_topic: "Resource"
+      nav_label: "Member Portal"
+      member_since: "Member since %{date}"
+      vehicle_pending_title: "Vehicle details pending"
+      vehicle_pending_body: "Your vehicle information will appear here once registration is complete."
+      unknown_error: "Failed to load profile"
+      pending: "Pending"

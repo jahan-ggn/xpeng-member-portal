@@ -1,0 +1,35 @@
+plugins:
+  xpeng_member_portal_enabled:
+    default: true
+    client: true
+
+  xpeng_member_profile_endpoint:
+    default: ""
+    client: false
+
+  xpeng_member_api_key:
+    default: ""
+    client: false
+
+  xpeng_member_api_username:
+    default: ""
+    client: false
+
+  xpeng_member_uid_field:
+    default: "member_uid"
+    client: false
+
+  xpeng_owner_resource_topic_ids:
+    default: ""
+    client: false
+    type: list
+
+  xpeng_member_resource_topic_ids:
+    default: ""
+    client: false
+    type: list
+
+  xpeng_dealer_resource_topic_ids:
+    default: ""
+    client: false
+    type: list
