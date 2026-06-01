@@ -20,18 +20,22 @@ module XpengMemberPortal
     attr_reader :member_type
 
     def topic_ids
-      @topic_ids ||= begin
-        ids_string =
-          case member_type.to_s.downcase
-          when "current_owner", "owner" then SiteSetting.xpeng_owner_resource_topic_ids
-          when "dealer" then SiteSetting.xpeng_dealer_resource_topic_ids
-          else SiteSetting.xpeng_member_resource_topic_ids
-          # when "member" then SiteSetting.xpeng_member_resource_topic_ids
-          # else ""
-          end
+      @topic_ids ||=
+        begin
+          ids_string =
+            case member_type.to_s.downcase
+            when "current_owner", "owner"
+              SiteSetting.xpeng_owner_resource_topic_ids
+            when "dealer"
+              SiteSetting.xpeng_dealer_resource_topic_ids
+            else
+              SiteSetting.xpeng_member_resource_topic_ids
+              # when "member" then SiteSetting.xpeng_member_resource_topic_ids
+              # else ""
+            end
 
-        ids_string.to_s.split("|").map(&:to_i).reject(&:zero?)
-      end
+          ids_string.to_s.split("|").map(&:to_i).reject(&:zero?)
+        end
     end
   end
 end

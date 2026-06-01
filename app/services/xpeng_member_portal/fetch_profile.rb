@@ -22,7 +22,7 @@ module XpengMemberPortal
           "xpeng_registration_verified" => payload[:registration_verified],
           "xpeng_member_type" => payload[:member_type],
           "xpeng_registration_year" => payload[:registration_year],
-        }
+        },
       )
 
       Result.new(success?: true, data: payload)
@@ -35,18 +35,19 @@ module XpengMemberPortal
     attr_reader :user
 
     def fetch_and_transform
-      raw = ProfileClient.new(
-        user: user,
-        api_key: SiteSetting.xpeng_member_api_key,
-        api_username: SiteSetting.xpeng_member_api_username
-      ).fetch
+      raw =
+        ProfileClient.new(
+          user: user,
+          api_key: SiteSetting.xpeng_member_api_key,
+          api_username: SiteSetting.xpeng_member_api_username,
+        ).fetch
 
       data = raw.is_a?(Hash) && raw["data"] ? raw["data"] : raw
       data = data.symbolize_keys
 
       data.merge(
         resources: ResourcesQuery.new(data[:member_type]).to_a,
-        discourse_username: user.username
+        discourse_username: user.username,
       )
     end
   end

@@ -9,9 +9,7 @@ module Jobs
       fields = args["fields"] || {}
       return if fields.blank?
 
-      fields.each do |key, value|
-        user.custom_fields[key.to_s] = value
-      end
+      fields.each { |key, value| user.custom_fields[key.to_s] = value }
 
       user.save_custom_fields(true)
     end
