@@ -28,10 +28,10 @@ module XpengMemberPortal
               SiteSetting.xpeng_owner_resource_topic_ids
             when "dealer"
               SiteSetting.xpeng_dealer_resource_topic_ids
-            else
+            when "member"
               SiteSetting.xpeng_member_resource_topic_ids
-              # when "member" then SiteSetting.xpeng_member_resource_topic_ids
-              # else ""
+            else
+              ""
             end
 
           ids_string.to_s.split("|").map(&:to_i).reject(&:zero?)

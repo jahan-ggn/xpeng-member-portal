@@ -14,18 +14,27 @@ module XpengMemberPortal
     def fetch
       validate_config!
 
-      response =
-        Excon.get(request_url, headers: request_headers, connect_timeout: 5, read_timeout: 10)
+      uri = URI.parse(request_url)
 
-      unless response.status == 200
+      http = FinalDestination::HTTP.new(uri.host, uri.port)
+      http.use_ssl = uri.scheme == "https"
+      http.open_timeout = 5
+      http.read_timeout = 10
+
+      request = FinalDestination::HTTP::Get.new(uri.request_uri)
+      request["X-Discourse-Api-Key"] = api_key
+      request["X-Discourse-Api-Username"] = api_username
+
+      response = http.request(request)
+
+      unless response.is_a?(Net::HTTPSuccess)
         raise Error, I18n.t("xpeng_member_portal.errors.profile_fetch_failed")
       end
 
       JSON.parse(response.body)
-    rescue Excon::Errors::Timeout
+    rescue Net::OpenTimeout, Net::ReadTimeout
       raise Error, I18n.t("xpeng_member_portal.errors.profile_fetch_timeout")
-    rescue Excon::Error, JSON::ParserError => e
-      Rails.logger.warn("[XpengMemberPortal] #{e.class}: #{e.message}")
+    rescue Net::HTTPError, JSON::ParserError => e
       raise Error, I18n.t("xpeng_member_portal.errors.profile_fetch_failed")
     end
 
@@ -34,23 +43,14 @@ module XpengMemberPortal
     attr_reader :user, :api_key, :api_username
 
     def validate_config!
-      required = {
-        endpoint => "endpoint_not_configured",
-        api_key => "api_key_missing",
-        api_username => "api_username_missing",
-        member_uid => "member_uid_missing",
-      }
-      required.each do |value, error_key|
-        raise Error, I18n.t("xpeng_member_portal.errors.#{error_key}") if value.blank?
-      end
+      raise Error, I18n.t("xpeng_member_portal.errors.endpoint_not_configured") if endpoint.blank?
+      raise Error, I18n.t("xpeng_member_portal.errors.api_key_missing") if api_key.blank?
+      raise Error, I18n.t("xpeng_member_portal.errors.api_username_missing") if api_username.blank?
+      raise Error, I18n.t("xpeng_member_portal.errors.member_uid_missing") if member_uid.blank?
     end
 
     def request_url
       "#{endpoint}?uid=#{CGI.escape(member_uid)}"
-    end
-
-    def request_headers
-      { "X-Discourse-Api-Key" => api_key, "X-Discourse-Api-Username" => api_username }
     end
 
     def endpoint

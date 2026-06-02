@@ -1,7 +1,7 @@
 import Component from "@glimmer/component";
 import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
-import isTruthyCustomField from "../lib/xpeng-truthy";
+import { isTruthyCustomField } from "../lib/xpeng-truthy";
 
 export default class UserPortal extends Component {
   get profile() {
@@ -12,7 +12,7 @@ export default class UserPortal extends Component {
     return this.args.model?.error;
   }
 
-  get isReady() {
+  get showResources() {
     return !!this.profile?.member_type;
   }
 
@@ -73,6 +73,17 @@ export default class UserPortal extends Component {
     return isTruthyCustomField(this.profile.registration_verified);
   }
 
+  get dvlaVerified() {
+    return this.profile.dvla_verified;
+  }
+
+  get dvlaSubtitle() {
+    const parts = [this.profile.vehicle_model, this.displayMemberType].filter(
+      Boolean
+    );
+    return parts.length ? parts.join(" · ") : null;
+  }
+
   <template>
     <div class="xpeng-member-portal">
       {{#if this.error}}
@@ -102,25 +113,28 @@ export default class UserPortal extends Component {
           {{/each}}
         </div>
 
-        {{#if this.verified}}
+        {{#if this.dvlaVerified}}
           <div class="xpeng-member-portal__dvla">
             <div class="xpeng-member-portal__dvla-info">
               <div class="xpeng-member-portal__dvla-title">
                 {{i18n "xpeng_member_portal.dvla_verified_title"}}
               </div>
               <div class="xpeng-member-portal__dvla-sub">
-                {{this.profile.vehicle_model}}
-                ·
-                {{i18n "xpeng_member_portal.dvla_confirmed_owner"}}
+                {{this.dvlaSubtitle}}
               </div>
             </div>
             <div class="xpeng-member-portal__dvla-plate">
               {{this.profile.registration_number}}
             </div>
           </div>
+        {{else}}
+          <div class="xpeng-member-portal__not-ready">
+            <h3>{{i18n "xpeng_member_portal.vehicle_pending_title"}}</h3>
+            <p>{{i18n "xpeng_member_portal.vehicle_pending_body"}}</p>
+          </div>
         {{/if}}
 
-        {{#if this.isReady}}
+        {{#if this.showResources}}
           {{#if this.resources.length}}
             <div class="xpeng-member-portal__resources">
               <h3 class="xpeng-member-portal__section-title">
@@ -148,11 +162,6 @@ export default class UserPortal extends Component {
               </div>
             </div>
           {{/if}}
-        {{else}}
-          <div class="xpeng-member-portal__not-ready">
-            <h3>{{i18n "xpeng_member_portal.vehicle_pending_title"}}</h3>
-            <p>{{i18n "xpeng_member_portal.vehicle_pending_body"}}</p>
-          </div>
         {{/if}}
       {{/if}}
     </div>

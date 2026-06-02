@@ -1,8 +1,11 @@
 import Component from "@glimmer/component";
+import { service } from "@ember/service";
 import I18n, { i18n } from "discourse-i18n";
-import isTruthyCustomField from "../../lib/xpeng-truthy";
+import { isDvlaVerified, isTruthyCustomField } from "../../lib/xpeng-truthy";
 
 export default class XpengProfileBadges extends Component {
+  @service siteSettings;
+
   get memberSince() {
     const dateStr = this.args.model.created_at;
     if (!dateStr) {
@@ -25,6 +28,13 @@ export default class XpengProfileBadges extends Component {
 
   get verified() {
     return isTruthyCustomField(this.args.model.xpeng_registration_verified);
+  }
+
+  get dvlaVerified() {
+    return isDvlaVerified(
+      this.args.model,
+      this.siteSettings.xpeng_dvla_verified_group_name
+    );
   }
 
   get displayMemberType() {
@@ -57,6 +67,9 @@ export default class XpengProfileBadges extends Component {
           >
             {{i18n "xpeng_member_portal.verified"}}
           </span>
+        {{/if}}
+
+        {{#if this.dvlaVerified}}
           <span
             class="xpeng-profile-badges__pill xpeng-profile-badges__pill--dvla"
           >

@@ -15,6 +15,7 @@ end
 require_relative "lib/xpeng_member_portal/engine"
 register_asset "stylesheets/portal.scss"
 register_asset "stylesheets/profile-badges.scss"
+register_asset "stylesheets/dvla-gate.scss"
 
 after_initialize do
   add_to_serializer(
@@ -34,6 +35,25 @@ after_initialize do
     :xpeng_registration_year,
     include_condition: -> { scope.can_see_xpeng_portal?(object) },
   ) { object.custom_fields["xpeng_registration_year"] }
+
+  add_to_serializer(
+    :user,
+    :xpeng_registration_number,
+    include_condition: -> { scope.can_see_xpeng_portal?(object) },
+  ) { object.custom_fields["xpeng_registration_number"] }
+
+  add_to_serializer(
+    :topic_view,
+    :requires_dvla_verification,
+    include_condition: -> do
+      SiteSetting.xpeng_dvla_gated_category_ids.present? &&
+        SiteSetting
+          .xpeng_dvla_gated_category_ids
+          .split("|")
+          .map(&:to_i)
+          .include?(object.topic.category_id)
+    end,
+  ) { !scope.user&.groups&.exists?(name: SiteSetting.xpeng_dvla_verified_group_name) }
 
   add_to_class(:guardian, :can_see_xpeng_portal?) do |target_user|
     return false unless SiteSetting.xpeng_member_portal_enabled

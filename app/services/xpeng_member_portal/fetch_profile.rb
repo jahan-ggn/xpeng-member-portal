@@ -48,6 +48,7 @@ module XpengMemberPortal
       data.merge(
         resources: ResourcesQuery.new(data[:member_type]).to_a,
         discourse_username: user.username,
+        registration_number: user.custom_fields["xpeng_registration_number"],
       )
     end
   end

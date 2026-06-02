@@ -7,6 +7,10 @@ plugins:
     default: ""
     client: false
 
+  xpeng_dvla_verification_endpoint:
+    default: ""
+    client: false
+
   xpeng_member_api_key:
     default: ""
     client: false
@@ -18,6 +22,15 @@ plugins:
   xpeng_member_uid_field:
     default: "member_uid"
     client: false
+
+  xpeng_dvla_verified_group_name:
+    default: "dvla_verified"
+    client: true
+
+  xpeng_dvla_gated_category_ids:
+    default: ""
+    client: true
+    type: category_list
 
   xpeng_owner_resource_topic_ids:
     default: ""
