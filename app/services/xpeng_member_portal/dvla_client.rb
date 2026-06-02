@@ -2,7 +2,8 @@
 
 module XpengMemberPortal
   class DvlaClient
-    class Error < StandardError; end
+    class Error < StandardError
+    end
 
     def initialize(user:, registration_number:, api_key:, api_username:)
       @user = user
@@ -11,7 +12,7 @@ module XpengMemberPortal
       @api_username = api_username
     end
 
-        def verify
+    def verify
       validate_config!
 
       uri = URI.parse(SiteSetting.xpeng_dvla_verification_endpoint)
@@ -35,7 +36,12 @@ module XpengMemberPortal
       when Net::HTTPSuccess
         JSON.parse(response.body).symbolize_keys
       when Net::HTTPNotFound
-        body = JSON.parse(response.body) rescue {}
+        body =
+          begin
+            JSON.parse(response.body)
+          rescue StandardError
+            {}
+          end
         { error: body["error"] }.compact.symbolize_keys
       else
         raise Error, I18n.t("xpeng_member_portal.errors.dvla_verification_failed")
@@ -52,17 +58,12 @@ module XpengMemberPortal
 
     def validate_config!
       if SiteSetting.xpeng_dvla_verification_endpoint.blank?
-        raise Error,
-              I18n.t("xpeng_member_portal.errors.dvla_endpoint_not_configured")
+        raise Error, I18n.t("xpeng_member_portal.errors.dvla_endpoint_not_configured")
       end
 
-      if api_key.blank?
-        raise Error, I18n.t("xpeng_member_portal.errors.api_key_missing")
-      end
+      raise Error, I18n.t("xpeng_member_portal.errors.api_key_missing") if api_key.blank?
 
-      if api_username.blank?
-        raise Error, I18n.t("xpeng_member_portal.errors.api_username_missing")
-      end
+      raise Error, I18n.t("xpeng_member_portal.errors.api_username_missing") if api_username.blank?
     end
   end
 end
