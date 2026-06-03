@@ -10,9 +10,10 @@ module XpengMemberPortal
       result = FetchProfile.new(user).call
 
       if result.success?
-        data = result.data.merge(
-          dvla_verified: user.groups.exists?(name: SiteSetting.xpeng_dvla_verified_group_name),
-        )
+        data =
+          result.data.merge(
+            dvla_verified: user.groups.exists?(name: SiteSetting.xpeng_dvla_verified_group_name),
+          )
         { data: data }
       else
         { error: result.error }

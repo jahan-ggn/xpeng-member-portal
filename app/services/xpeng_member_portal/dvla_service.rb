@@ -10,12 +10,13 @@ module XpengMemberPortal
     end
 
     def verify
-      result = DvlaClient.new(
-        user: user,
-        registration_number: registration_number,
-        api_key: SiteSetting.xpeng_member_api_key,
-        api_username: SiteSetting.xpeng_member_api_username,
-      ).verify
+      result =
+        DvlaClient.new(
+          user: user,
+          registration_number: registration_number,
+          api_key: SiteSetting.xpeng_member_api_key,
+          api_username: SiteSetting.xpeng_member_api_username,
+        ).verify
 
       if result[:verified]
         add_user_to_verified_group

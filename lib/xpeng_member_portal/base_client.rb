@@ -2,8 +2,10 @@
 
 module XpengMemberPortal
   class BaseClient
-    class Error < StandardError; end
-    class TimeoutError < Error; end
+    class Error < StandardError
+    end
+    class TimeoutError < Error
+    end
 
     DEFAULT_OPEN_TIMEOUT = 5
     DEFAULT_READ_TIMEOUT = 10
