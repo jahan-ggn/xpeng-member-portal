@@ -1,7 +1,11 @@
 import Component from "@glimmer/component";
 import { service } from "@ember/service";
 import I18n, { i18n } from "discourse-i18n";
-import { isDvlaVerified, isTruthyCustomField } from "../../lib/xpeng-truthy";
+import {
+  formatMemberType,
+  isDvlaVerified,
+  isTruthyCustomField,
+} from "../../lib/xpeng-helpers";
 
 export default class XpengProfileBadges extends Component {
   @service siteSettings;
@@ -38,14 +42,7 @@ export default class XpengProfileBadges extends Component {
   }
 
   get displayMemberType() {
-    const type = this.memberType;
-    if (!type) {
-      return null;
-    }
-    return type
-      .split("_")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
+    return formatMemberType(this.memberType);
   }
 
   <template>

@@ -13,6 +13,7 @@ import { i18n } from "discourse-i18n";
 
 export default class XpengDvlaGate extends Component {
   @service currentUser;
+  @service router;
   @service siteSettings;
 
   @tracked regNumber = "";
@@ -68,7 +69,7 @@ export default class XpengDvlaGate extends Component {
       });
 
       if (result.verified) {
-        window.location.reload();
+        this.router.refresh();
       } else {
         this.errorMessage =
           result.reason || i18n("xpeng_member_portal.dvla.verification_failed");

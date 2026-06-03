@@ -15,15 +15,20 @@ module XpengMemberPortal
       payload = fetch_and_transform
       ProfileCache.write(user.id, payload)
 
-      Jobs.enqueue(
-        :xpeng_member_portal_persist_custom_fields,
-        user_id: user.id,
-        fields: {
-          "xpeng_registration_verified" => payload[:registration_verified],
-          "xpeng_member_type" => payload[:member_type],
-          "xpeng_registration_year" => payload[:registration_year],
-        },
-      )
+      new_fields = {
+        "xpeng_registration_verified" => payload[:registration_verified],
+        "xpeng_member_type" => payload[:member_type],
+        "xpeng_registration_year" => payload[:registration_year],
+      }
+
+      changed = new_fields.any? { |key, value| user.custom_fields[key] != value }
+      if changed
+        Jobs.enqueue(
+          :xpeng_member_portal_persist_custom_fields,
+          user_id: user.id,
+          fields: new_fields,
+        )
+      end
 
       Result.new(success?: true, data: payload)
     rescue ProfileClient::Error => e

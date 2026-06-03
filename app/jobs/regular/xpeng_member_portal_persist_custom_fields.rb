@@ -11,7 +11,7 @@ module Jobs
 
       fields.each { |key, value| user.custom_fields[key.to_s] = value }
 
-      user.save_custom_fields(true)
+      user.save_custom_fields
     end
   end
 end

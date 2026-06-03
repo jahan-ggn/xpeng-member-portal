@@ -1,7 +1,7 @@
 import Component from "@glimmer/component";
 import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
-import { isTruthyCustomField } from "../lib/xpeng-truthy";
+import { formatMemberType, isTruthyCustomField } from "../lib/xpeng-helpers";
 
 export default class UserPortal extends Component {
   get profile() {
@@ -29,14 +29,7 @@ export default class UserPortal extends Component {
   }
 
   get displayMemberType() {
-    const type = this.profile?.member_type;
-    if (!type) {
-      return null;
-    }
-    return type
-      .split("_")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
+    return formatMemberType(this.profile?.member_type);
   }
 
   get infoCards() {

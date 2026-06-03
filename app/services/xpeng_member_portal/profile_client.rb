@@ -1,46 +1,34 @@
 # frozen_string_literal: true
 
 module XpengMemberPortal
-  class ProfileClient
-    class Error < StandardError
+  class ProfileClient < BaseClient
+    class Error < BaseClient::Error
     end
 
     def initialize(user:, api_key:, api_username:)
+      super(api_key: api_key, api_username: api_username)
       @user = user
-      @api_key = api_key
-      @api_username = api_username
     end
 
     def fetch
       validate_config!
 
-      uri = URI.parse(request_url)
-
-      http = FinalDestination::HTTP.new(uri.host, uri.port)
-      http.use_ssl = uri.scheme == "https"
-      http.open_timeout = 5
-      http.read_timeout = 10
-
-      request = FinalDestination::HTTP::Get.new(uri.request_uri)
-      request["X-Discourse-Api-Key"] = api_key
-      request["X-Discourse-Api-Username"] = api_username
-
-      response = http.request(request)
+      response = http_request(URI.parse(request_url))
 
       unless response.is_a?(Net::HTTPSuccess)
         raise Error, I18n.t("xpeng_member_portal.errors.profile_fetch_failed")
       end
 
       JSON.parse(response.body)
-    rescue Net::OpenTimeout, Net::ReadTimeout
+    rescue BaseClient::TimeoutError
       raise Error, I18n.t("xpeng_member_portal.errors.profile_fetch_timeout")
-    rescue Net::HTTPError, JSON::ParserError => e
+    rescue JSON::ParserError
       raise Error, I18n.t("xpeng_member_portal.errors.profile_fetch_failed")
     end
 
     private
 
-    attr_reader :user, :api_key, :api_username
+    attr_reader :user
 
     def validate_config!
       raise Error, I18n.t("xpeng_member_portal.errors.endpoint_not_configured") if endpoint.blank?
@@ -63,10 +51,10 @@ module XpengMemberPortal
           field_name = SiteSetting.xpeng_member_uid_field
           return nil if field_name.blank?
 
-          user_field = UserField.find_by(name: field_name)
-          return nil if user_field.blank?
+          user_field_id = XpengMemberPortal.user_field_id_for(field_name)
+          return nil if user_field_id.blank?
 
-          user.custom_fields["user_field_#{user_field.id}"].presence
+          user.custom_fields["user_field_#{user_field_id}"].presence
         end
     end
   end

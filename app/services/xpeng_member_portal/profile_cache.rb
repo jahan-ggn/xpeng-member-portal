@@ -7,7 +7,7 @@ module XpengMemberPortal
 
     def self.read(user_id)
       data = Discourse.redis.get("#{PREFIX}:#{user_id}")
-      JSON.parse(data) if data.present?
+      JSON.parse(data, symbolize_names: true) if data.present?
     rescue JSON::ParserError
       nil
     end
