@@ -30,10 +30,13 @@ module ::XpengMemberPortal
     @gated_category_ids = nil
   end
 
-  def self.user_field_id_for(name)
+  def self.member_uid_field_id
+    name = SiteSetting.xpeng_member_uid_field
+    return if name.blank?
+
     Discourse
       .cache
-      .fetch("xpeng_member_portal:user_field_id:#{name}", expires_in: 1.hour) do
+      .fetch("xpeng_member_portal:member_uid_field_id", expires_in: 1.hour) do
         UserField.find_by(name: name)&.id
       end
   end
@@ -44,7 +47,7 @@ module ::XpengMemberPortal
 
     Discourse
       .cache
-      .fetch("xpeng_member_portal:verified_group:#{group_name}", expires_in: 1.hour) do
+      .fetch("xpeng_member_portal:verified_group", expires_in: 1.hour) do
         Group.find_by(name: group_name)
       end
   end
@@ -90,15 +93,11 @@ after_initialize do
     XpengMemberPortal.clear_gated_category_ids! if name == :xpeng_dvla_gated_category_ids
 
     if name == :xpeng_member_uid_field
-      Discourse.cache.delete(
-        "xpeng_member_portal:user_field_id:#{SiteSetting.xpeng_member_uid_field}",
-      )
+      Discourse.cache.delete("xpeng_member_portal:member_uid_field_id")
     end
 
     if name == :xpeng_dvla_verified_group_name
-      Discourse.cache.delete(
-        "xpeng_member_portal:verified_group:#{SiteSetting.xpeng_dvla_verified_group_name}",
-      )
+      Discourse.cache.delete("xpeng_member_portal:verified_group")
     end
   end
 end

@@ -2,7 +2,7 @@
 
 module XpengMemberPortal
   class ProfileService
-    def initialize(user, guardian)
+    def initialize(user)
       @user = user
     end
 

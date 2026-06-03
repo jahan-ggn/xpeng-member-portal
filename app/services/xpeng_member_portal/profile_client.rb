@@ -51,7 +51,7 @@ module XpengMemberPortal
           field_name = SiteSetting.xpeng_member_uid_field
           return nil if field_name.blank?
 
-          user_field_id = XpengMemberPortal.user_field_id_for(field_name)
+          user_field_id = XpengMemberPortal.member_uid_field_id
           return nil if user_field_id.blank?
 
           user.custom_fields["user_field_#{user_field_id}"].presence
