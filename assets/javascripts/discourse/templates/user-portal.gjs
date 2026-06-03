@@ -1,24 +1,34 @@
 import Component from "@glimmer/component";
+import { action } from "@ember/object";
 import { service } from "@ember/service";
 import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
 import XpengDvlaVerifyForm from "../components/xpeng-dvla-verify-form";
-import { formatMemberType, isTruthyCustomField } from "../lib/xpeng-helpers";
+import {
+  formatMemberType,
+  isDvlaVerified,
+  isTruthyCustomField,
+} from "../lib/xpeng-helpers";
 
 export default class UserPortal extends Component {
   @service currentUser;
-  @service router;
+  // @service router;
+  @service siteSettings;
 
   get profile() {
-    return this.args.model?.data || {};
+    return this.args.model?.profile?.data || {};
   }
 
   get error() {
-    return this.args.model?.error;
+    return this.args.model?.profile?.error;
+  }
+
+  get userModel() {
+    return this.args.model?.user;
   }
 
   get isOwnPortal() {
-    return this.currentUser?.username === this.profile.discourse_username;
+    return this.currentUser?.username === this.userModel?.username;
   }
 
   get showResources() {
@@ -70,7 +80,14 @@ export default class UserPortal extends Component {
   }
 
   get dvlaVerified() {
-    return this.profile.dvla_verified;
+    return isDvlaVerified(
+      this.userModel,
+      this.siteSettings.xpeng_dvla_verified_group_name
+    );
+  }
+
+  get registrationNumber() {
+    return this.userModel?.xpeng_registration_number;
   }
 
   get dvlaSubtitle() {
@@ -78,6 +95,11 @@ export default class UserPortal extends Component {
       Boolean
     );
     return parts.length ? parts.join(" · ") : null;
+  }
+
+  @action
+  async handleVerifySuccess() {
+    window.location.reload();
   }
 
   <template>
@@ -123,7 +145,7 @@ export default class UserPortal extends Component {
               </div>
             </div>
             <div class="xpeng-member-portal__dvla-plate">
-              {{this.profile.registration_number}}
+              {{this.registrationNumber}}
             </div>
           </div>
         {{else}}
@@ -131,7 +153,7 @@ export default class UserPortal extends Component {
             <div class="xpeng-member-portal__verify">
               <h3>{{i18n "xpeng_member_portal.dvla.verify_title"}}</h3>
               <p>{{i18n "xpeng_member_portal.dvla.verify_body"}}</p>
-              <XpengDvlaVerifyForm @onSuccess={{this.router.refresh}} />
+              <XpengDvlaVerifyForm @onSuccess={{this.handleVerifySuccess}} />
             </div>
           {{/if}}
         {{/if}}

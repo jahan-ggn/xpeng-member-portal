@@ -47,14 +47,20 @@ module XpengMemberPortal
           api_username: SiteSetting.xpeng_member_api_username,
         ).fetch
 
-      data = raw.is_a?(Hash) && raw["data"] ? raw["data"] : raw
-      data = data.symbolize_keys
+      api_data = raw.is_a?(Hash) && raw["data"] ? raw["data"] : raw
+      api_data = api_data.with_indifferent_access
 
-      data.merge(
-        resources: ResourcesQuery.new(data[:member_type]).to_a,
+      {
+        vehicle_model: api_data["vehicle_model"],
+        trim_level: api_data["trim_level"],
+        colour: api_data["colour"],
+        registration_year: api_data["registration_year"],
+        registration_verified: api_data["registration_verified"],
+        member_type: api_data["member_type"],
+        uid: api_data["uid"],
+        resources: ResourcesQuery.new(api_data["member_type"]).to_a,
         discourse_username: user.username,
-        registration_number: user.custom_fields["xpeng_registration_number"],
-      )
+      }
     end
   end
 end

@@ -45,6 +45,11 @@ export default class XpengDvlaGate extends Component {
     document.body.classList.remove("has-xpeng-dvla-gate");
   }
 
+  @action
+  handleVerifySuccess() {
+    this.router.refresh();
+  }
+
   <template>
     {{#if this.shouldShow}}
       <div
@@ -91,7 +96,7 @@ export default class XpengDvlaGate extends Component {
               </div>
             </div>
           {{else}}
-            <XpengDvlaVerifyForm @onSuccess={{this.router.refresh}} />
+            <XpengDvlaVerifyForm @onSuccess={{this.handleVerifySuccess}} />
           {{/if}}
         </div>
       </div>
