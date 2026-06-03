@@ -217,13 +217,4 @@
     color: var(--primary-medium);
     margin: 0.1rem 0 0;
   }
-
-  &__not-ready {
-    text-align: center;
-    padding: 2rem;
-    color: var(--primary-medium);
-    background: var(--secondary);
-    border: 1px solid var(--primary-low);
-    border-radius: 4px;
-  }
 }

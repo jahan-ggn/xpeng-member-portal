@@ -31,7 +31,7 @@ module XpengMemberPortal
         body =
           begin
             JSON.parse(response.body)
-          rescue StandardError
+          rescue JSON::ParserError
             {}
           end
         { error: body["error"] }.compact.symbolize_keys
