@@ -48,6 +48,41 @@
       }
     }
   }
+
+  .xpeng-dvla-verify-form {
+    margin-top: 2rem;
+  }
+}
+
+.xpeng-dvla-verify-form {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  align-items: center;
+  max-width: 400px;
+  margin: 0 auto;
+
+  input,
+  .btn {
+    margin-bottom: 0;
+    min-height: 32px;
+    height: 32px;
+    box-sizing: border-box;
+    line-height: 1;
+  }
+
+  input {
+    flex: 1;
+  }
+}
+
+.xpeng-dvla-verify-form__error {
+  color: var(--danger);
+  margin-top: 1rem;
+
+  .d-icon {
+    margin-right: 0.5rem;
+  }
 }
 
 body.has-xpeng-dvla-gate {

@@ -1,15 +1,24 @@
 import Component from "@glimmer/component";
+import { service } from "@ember/service";
 import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
+import XpengDvlaVerifyForm from "../components/xpeng-dvla-verify-form";
 import { formatMemberType, isTruthyCustomField } from "../lib/xpeng-helpers";
 
 export default class UserPortal extends Component {
+  @service currentUser;
+  @service router;
+
   get profile() {
     return this.args.model?.data || {};
   }
 
   get error() {
     return this.args.model?.error;
+  }
+
+  get isOwnPortal() {
+    return this.currentUser?.username === this.profile.discourse_username;
   }
 
   get showResources() {
@@ -20,12 +29,6 @@ export default class UserPortal extends Component {
     const p = this.profile;
     const parts = [p.vehicle_model, p.trim_level].filter(Boolean);
     return parts.length ? parts.join(" — ") : null;
-  }
-
-  get vehicleMeta() {
-    const p = this.profile;
-    const meta = [p.colour, p.registration_year].filter(Boolean).join(", ");
-    return meta || null;
   }
 
   get displayMemberType() {
@@ -109,7 +112,10 @@ export default class UserPortal extends Component {
         {{#if this.dvlaVerified}}
           <div class="xpeng-member-portal__dvla">
             <div class="xpeng-member-portal__dvla-info">
-              <div class="xpeng-member-portal__dvla-title">
+              <div
+                class="xpeng-member-portal__dvla-title
+                  {{if this.dvlaSubtitle 'has-subtitle'}}"
+              >
                 {{i18n "xpeng_member_portal.dvla_verified_title"}}
               </div>
               <div class="xpeng-member-portal__dvla-sub">
@@ -121,10 +127,13 @@ export default class UserPortal extends Component {
             </div>
           </div>
         {{else}}
-          <div class="xpeng-member-portal__not-ready">
-            <h3>{{i18n "xpeng_member_portal.vehicle_pending_title"}}</h3>
-            <p>{{i18n "xpeng_member_portal.vehicle_pending_body"}}</p>
-          </div>
+          {{#if this.isOwnPortal}}
+            <div class="xpeng-member-portal__verify">
+              <h3>{{i18n "xpeng_member_portal.dvla.verify_title"}}</h3>
+              <p>{{i18n "xpeng_member_portal.dvla.verify_body"}}</p>
+              <XpengDvlaVerifyForm @onSuccess={{this.router.refresh}} />
+            </div>
+          {{/if}}
         {{/if}}
 
         {{#if this.showResources}}

@@ -1,24 +1,17 @@
 import Component from "@glimmer/component";
-import { tracked } from "@glimmer/tracking";
 import { action } from "@ember/object";
 import didInsert from "@ember/render-modifiers/modifiers/did-insert";
 import willDestroy from "@ember/render-modifiers/modifiers/will-destroy";
 import { service } from "@ember/service";
 import routeAction from "discourse/helpers/route-action";
-import { ajax } from "discourse/lib/ajax";
 import DButton from "discourse/ui-kit/d-button";
-import TextField from "discourse/ui-kit/d-text-field";
-import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
+import XpengDvlaVerifyForm from "./xpeng-dvla-verify-form";
 
 export default class XpengDvlaGate extends Component {
   @service currentUser;
   @service router;
   @service siteSettings;
-
-  @tracked regNumber = "";
-  @tracked errorMessage = null;
-  @tracked isLoading = false;
 
   get topicRequiresVerification() {
     return this.args.topic?.requires_dvla_verification;
@@ -50,38 +43,6 @@ export default class XpengDvlaGate extends Component {
   @action
   removeBodyClass() {
     document.body.classList.remove("has-xpeng-dvla-gate");
-  }
-
-  @action
-  async verifyRegistration() {
-    if (!this.regNumber.trim()) {
-      this.errorMessage = i18n("xpeng_member_portal.dvla.reg_number_required");
-      return;
-    }
-
-    this.isLoading = true;
-    this.errorMessage = null;
-
-    try {
-      const result = await ajax("/xpeng-member-portal/verify-dvla", {
-        type: "POST",
-        data: { registration_number: this.regNumber.trim() },
-      });
-
-      if (result.verified) {
-        this.router.refresh();
-      } else {
-        this.errorMessage =
-          result.reason || i18n("xpeng_member_portal.dvla.verification_failed");
-      }
-    } catch (error) {
-      this.errorMessage =
-        error.jqXHR?.responseJSON?.error ||
-        error.jqXHR?.responseJSON?.reason ||
-        i18n("xpeng_member_portal.dvla.generic_error");
-    } finally {
-      this.isLoading = false;
-    }
   }
 
   <template>
@@ -130,29 +91,7 @@ export default class XpengDvlaGate extends Component {
               </div>
             </div>
           {{else}}
-            <div class="xpeng-dvla-gate__form">
-              <TextField
-                @value={{this.regNumber}}
-                @placeholder={{i18n "xpeng_member_portal.dvla.placeholder"}}
-                @disabled={{this.isLoading}}
-                class="xpeng-dvla-gate__input"
-              />
-              <DButton
-                @action={{this.verifyRegistration}}
-                @disabled={{this.isLoading}}
-                @translatedLabel={{i18n
-                  "xpeng_member_portal.dvla.verify_button"
-                }}
-                class="btn-primary"
-              />
-            </div>
-
-            {{#if this.errorMessage}}
-              <div class="xpeng-dvla-gate__error">
-                {{dIcon "triangle-exclamation"}}
-                {{this.errorMessage}}
-              </div>
-            {{/if}}
+            <XpengDvlaVerifyForm @onSuccess={{this.router.refresh}} />
           {{/if}}
         </div>
       </div>
