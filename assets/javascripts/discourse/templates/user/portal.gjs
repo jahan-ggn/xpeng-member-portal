@@ -3,16 +3,15 @@ import { action } from "@ember/object";
 import { service } from "@ember/service";
 import dIcon from "discourse/ui-kit/helpers/d-icon";
 import { i18n } from "discourse-i18n";
-import XpengDvlaVerifyForm from "../components/xpeng-dvla-verify-form";
+import XpengDvlaVerifyForm from "../../components/xpeng-dvla-verify-form";
 import {
   formatMemberType,
   isDvlaVerified,
   isTruthyCustomField,
-} from "../lib/xpeng-helpers";
+} from "../../lib/xpeng-helpers";
 
 export default class UserPortal extends Component {
   @service currentUser;
-  // @service router;
   @service siteSettings;
 
   get profile() {
@@ -57,11 +56,6 @@ export default class UserPortal extends Component {
         label: i18n("xpeng_member_portal.member_type"),
         value: this.displayMemberType || i18n("xpeng_member_portal.pending"),
         memberType: true,
-      },
-      {
-        label: i18n("xpeng_member_portal.member_id"),
-        value: p.uid || i18n("xpeng_member_portal.pending"),
-        mono: true,
       },
       {
         label: i18n("xpeng_member_portal.discourse_username"),

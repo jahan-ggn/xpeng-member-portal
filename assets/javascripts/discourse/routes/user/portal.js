@@ -6,10 +6,12 @@ export default class UserPortalRoute extends Route {
   model() {
     const user = this.modelFor("user");
 
-    return ajax("/xpeng-member-portal/member-profile.json", {
-      data: { username: user.username },
-    })
-      .then((profile) => ({ user, profile }))
+    return ajax(`/u/${user.username}.json`)
+      .then((data) =>
+        ajax("/xpeng-member-portal/member-profile.json", {
+          data: { username: user.username },
+        }).then((profile) => ({ user: data.user, profile }))
+      )
       .catch((error) => {
         const specificError =
           error?.responseJSON?.error || error?.jqXHR?.responseJSON?.error;

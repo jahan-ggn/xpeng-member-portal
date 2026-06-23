@@ -33,17 +33,5 @@
     background: rgb(232, 69, 10, 0.15);
     color: #e8450a;
     border: 1px solid rgb(232, 69, 10, 0.3);
-
-    &--verified {
-      background: rgb(0, 194, 178, 0.12);
-      color: #00c2b2;
-      border-color: rgb(0, 194, 178, 0.25);
-    }
-
-    &--dvla {
-      background: rgb(0, 194, 178, 0.08);
-      color: #00c2b2;
-      border-color: rgb(0, 194, 178, 0.2);
-    }
   }
 }

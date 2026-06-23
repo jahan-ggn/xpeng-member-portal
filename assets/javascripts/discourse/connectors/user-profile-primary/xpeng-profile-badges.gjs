@@ -1,11 +1,7 @@
 import Component from "@glimmer/component";
 import { service } from "@ember/service";
 import I18n, { i18n } from "discourse-i18n";
-import {
-  formatMemberType,
-  isDvlaVerified,
-  isTruthyCustomField,
-} from "../../lib/xpeng-helpers";
+import { isDvlaVerified } from "../../lib/xpeng-helpers";
 
 export default class XpengProfileBadges extends Component {
   @service siteSettings;
@@ -30,11 +26,7 @@ export default class XpengProfileBadges extends Component {
     return this.args.model.xpeng_member_type;
   }
 
-  get verified() {
-    return isTruthyCustomField(this.args.model.xpeng_registration_verified);
-  }
-
-  get dvlaVerified() {
+  get isVerified() {
     return isDvlaVerified(
       this.args.model,
       this.siteSettings.xpeng_dvla_verified_group_name
@@ -42,7 +34,29 @@ export default class XpengProfileBadges extends Component {
   }
 
   get displayMemberType() {
-    return formatMemberType(this.memberType);
+    const type = this.memberType;
+    if (!type) {
+      return null;
+    }
+
+    if (
+      this.isVerified &&
+      (type.toLowerCase() === "current_owner" || type.toLowerCase() === "owner")
+    ) {
+      return "Verified Owner";
+    }
+
+    return type
+      .split("_")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+  }
+
+  get pillClass() {
+    if (this.displayMemberType === "Verified Owner") {
+      return "xpeng-profile-badges__pill xpeng-profile-badges__pill--verified-owner";
+    }
+    return "xpeng-profile-badges__pill";
   }
 
   <template>
@@ -53,25 +67,7 @@ export default class XpengProfileBadges extends Component {
 
       <div class="xpeng-profile-badges__badges">
         {{#if this.memberType}}
-          <span
-            class="xpeng-profile-badges__pill"
-          >{{this.displayMemberType}}</span>
-        {{/if}}
-
-        {{#if this.verified}}
-          <span
-            class="xpeng-profile-badges__pill xpeng-profile-badges__pill--verified"
-          >
-            {{i18n "xpeng_member_portal.verified"}}
-          </span>
-        {{/if}}
-
-        {{#if this.dvlaVerified}}
-          <span
-            class="xpeng-profile-badges__pill xpeng-profile-badges__pill--dvla"
-          >
-            {{i18n "xpeng_member_portal.dvla_confirmed"}}
-          </span>
+          <span class={{this.pillClass}}>{{this.displayMemberType}}</span>
         {{/if}}
       </div>
     </div>
